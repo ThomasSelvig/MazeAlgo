@@ -1,5 +1,5 @@
 from PIL import Image, ImageGrab
-import os
+import os, sys
 
 frames = []  # to create a final GIF
 
@@ -9,7 +9,7 @@ class Colors:
 	ROAD = 0, 0, 0
 	END = 255, 0, 0
 
-	ANIM = 0, 139, 139
+	ANIM = 255, 165, 0
 
 
 def renderMaze(maze, colored, resizeFactor=1):
@@ -64,6 +64,7 @@ def searchNode(x, y, maze, pixels, visited=None):
 
 
 def main():
+	sys.setrecursionlimit(round(1e6))
 	folderPath = os.path.dirname(os.path.abspath(__file__))
 	maze = ImageGrab.grabclipboard()
 	pixels = maze.load()
@@ -73,9 +74,12 @@ def main():
 		# recursively search from the start node
 		path = searchNode(x, y, maze, pixels)
 		# save gif
-		frames[0].save(folderPath+"/maze.gif", save_all=True, append_images=frames[1:])
+		frames[0].save(folderPath+"/maze.gif", duration=0.01, save_all=True, append_images=frames[1:])
 		# show path, resized
 		renderMaze(maze, path).resize([i * 10 for i in maze.size]).show()
+
+	else:
+		print("No startnode found")
 
 
 if __name__ == '__main__':
